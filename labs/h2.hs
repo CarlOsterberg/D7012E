@@ -1,4 +1,4 @@
--- Code to Haskell lab assignment 2 in the course D7012E by Håkan Jonsson
+--get diff for x^2 to work
 
 import Data.Char
 
