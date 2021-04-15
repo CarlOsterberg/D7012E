@@ -1,5 +1,5 @@
 --get diff for x^2 to work
---ur mum
+--ur mu
 
 import Data.Char
 
