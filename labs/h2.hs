@@ -84,6 +84,8 @@ diff v (Op "/" e1 e2) =
   Op "/" (Op "-" (Op "*" (diff v e1) e1) (Op "*" e1 (diff v e2))) (Op "*" e2 e2)
 diff v (App "sin" arg) = Op "*" (App "cos" arg) (diff v arg)
 diff v (App "cos" arg) = Op "*" (Op "-" (Const 0) (App "sin" arg)) (diff v arg)
+diff v (App "log" arg) = Op "*" (Op "/" (Const 1) arg) (diff v arg)
+diff v (App "exp" arg) = Op "*" (App "exp" arg) (diff v arg)
 diff _ _ = error "can not compute the derivative"
 
 simplify :: EXPR -> EXPR
@@ -109,5 +111,34 @@ simplify (App id args) =
             ("exp", App "log" e) -> e
             (ids, e) -> App ids e
 
-tests :: String 
-tests = show (diff (Var "x") (parse "x*x"))
+mkfun ::(EXPR, EXPR) -> (Float -> Float)
+mkfun (exp, arg) x = eval exp [(unparse arg, x)]
+
+--x_(n+1)=x_n−f(x_n)/f′(x_n)
+findzero :: String -> String -> Float -> Float
+findzero arg f x_n0 =
+  if abs(x_n0 - x_n1) <= 0.0001
+    then x_n1
+  else findzero arg f x_n1
+    where x_n1 = x_n0 - eval (Op "/" (parse f) (diff (parse arg) (parse f))) [(arg,x_n0)]
+
+pow4 :: EXPR
+pow4 = simplify (diff (Var "x") (parse "x*x*x*x"))
+
+ln :: EXPR
+ln = simplify (diff (Var "x") (parse "log(x*x)"))
+
+e :: EXPR
+e = simplify (diff (Var "x") (parse "exp(x*x)"))
+
+test1 :: String
+test1 = unparse (simplify (diff (Var "x") (parse "exp(sin(2*x))")))
+
+test2 :: Float -> Float
+test2 x = mkfun (parse "x*x+2", Var "x") x
+
+test3 :: Float
+test3 = findzero "x" "x*x*x+x-1" 1.0
+
+test4 :: Float
+test4 = findzero "y" "cos(y)*sin(y)" 2.0
