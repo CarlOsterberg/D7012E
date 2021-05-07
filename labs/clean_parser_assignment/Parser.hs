@@ -1,3 +1,5 @@
+--Carl Österberg
+
 module Parser(module CoreParser, T, digit, digitVal, chars, letter, err,
               lit, number, iter, accept, require, token,
               spaces, word, (-#), (#-)) where
@@ -29,7 +31,7 @@ token :: Parser a -> Parser a
 token m = m #- spaces
 
 letter :: Parser Char
-letter cs = (char ? isAlpha) cs
+letter = (char ? isAlpha)
 
 word :: Parser String
 word = token (letter # iter letter >-> cons)

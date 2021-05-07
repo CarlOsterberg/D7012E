@@ -1,5 +1,4 @@
---get diff for x^2 to work
---ur m
+--Carl Österberg
 
 import Data.Char
 
@@ -120,7 +119,11 @@ findzero arg f x_n0 =
   if abs(x_n0 - x_n1) <= 0.0001
     then x_n1
   else findzero arg f x_n1
-    where x_n1 = x_n0 - eval (Op "/" (parse f) (diff (parse arg) (parse f))) [(arg,x_n0)]
+    --where x_n1 = x_n0 - eval (Op "/" (parse f) (diff (parse arg) (parse f))) [(arg,x_n0)]
+    where
+      x_n1 = x_n0 - mkfun (Op "/" func (diff (Var arg) func),Var arg) x_n0
+      func = parse f
+
 
 pow4 :: EXPR
 pow4 = simplify (diff (Var "x") (parse "x*x*x*x"))

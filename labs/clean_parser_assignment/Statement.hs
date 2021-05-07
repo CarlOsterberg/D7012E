@@ -1,3 +1,5 @@
+--Carl Österberg
+
 module Statement(T, parse, toString, fromString, exec) where
 import Prelude hiding (return, fail)
 import Parser hiding (T)
@@ -54,9 +56,9 @@ exec ((Begin t):stmnts) dict input = exec (t++stmnts) dict input
 exec (Write e:stmnts) dict input = exec stmnts dict (input ++ [Expr.value e dict])
 exec (Assignment var e:stmnts) dict input = exec stmnts (Dictionary.insert (var, Expr.value e dict) dict) input
 exec (Read v:stmnts) dict input = exec stmnts (Dictionary.insert (v,(head input)) dict) (tail input)
-exec (Repeat s e:stmnts) dict input = 
+exec (Repeat s e:stmnts) dict input =
     if (Expr.value e dict)<0
-        then exec (s:[Repeat s e]++stmnts) dict input 
+        then exec (s:Repeat s e : stmnts) dict input
         else exec (s:stmnts) dict input
 
 pickOut :: Maybe (Integer) -> String -> Integer
